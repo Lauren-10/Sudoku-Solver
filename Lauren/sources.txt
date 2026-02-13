@@ -1,0 +1,5 @@
+TRM paper for the ARC challenge - https://arxiv.org/pdf/2510.04871
+(Corresponding Github page) - https://github.com/SamsungSAILMontreal/TinyRecursiveModels
+Substack* = https://bdtechtalks.substack.com/p/how-samsungs-tiny-recursive-model
+Convolutional Neural Network for sudoku puzzles - https://github.com/Kyubyong/sudoku
+Test Time Adaptation of Tiny Recursive Models - https://trelis.com/wp-content/uploads/2025/11/mcgovern_test_time_adaptation_trm.pdf

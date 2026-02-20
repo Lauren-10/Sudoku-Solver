@@ -1,1 +1,3 @@
 https://nlp.fi.muni.cz/aiproject/ui/karmazin_vasilii2024/SudokuRL.pdf
+
+#Note: save trained model to file so that you dont have to rerun the whole creation every time

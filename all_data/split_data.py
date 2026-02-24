@@ -26,3 +26,5 @@ with open("train_sudoku.csv", "r") as infile:
                     count += 1
                 else:
                     t2.writerow(line)
+
+

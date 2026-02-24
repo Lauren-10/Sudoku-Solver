@@ -28,9 +28,15 @@ class Sudoku:
 
     #update a sqaure (Assuming num is between 1-9) if it is editable
     def update(self, num, i, j):
+        if self.is_valid_move(num, i, j):
+            self.board[i][j].set_number(num)
+
+    def is_valid_move(self, num, i, j):
         square = self.board[i][j]
         if square.editable:
-            self.board[i][j].set_number(num)
+            if num in self.get_possible_values(i, j):
+                return True
+        return False
 
     def get_row_values(self, row):
         values = []
@@ -99,4 +105,3 @@ class Sudoku:
 #TESTING
 s = Sudoku("004300209005009001070060043006002087190007400050083000600000105003508690042910300")
 print(s)
-print(s.get_possible_values(5,5))

@@ -30,12 +30,56 @@ class Sudoku:
     def update(self, num, i, j):
         if self.is_valid_move(num, i, j):
             self.board[i][j].set_number(num)
+            return True
+        if self.board[i][j].number == num:
+            return True
+        return False
+    def reset_board(self):
+        self.board = []
+        for i in range(9):
+            self.board.append([])
+            for j in range(9):
+                number = int(self.initial_board[(i * 9) + j])
+                editable = True if number == 0 else False
+                self.board[i].append(Square(i, j, number, editable))
+
+    def reset(self, i, j):
+        self.board[i][j].set_number(0)
 
     def is_valid_move(self, num, i, j):
         square = self.board[i][j]
         if square.editable:
             if num in self.get_possible_values(i, j):
                 return True
+        return False
+    
+    def fills_row(self, num, i, j):
+        row_vals = [num]
+        for col in range(len(self.board[i])):
+            if col != j:
+                row_vals.append(self.board[i][col].number)
+        if set(row_vals) == POSSIBLE_VALUES:
+            return True
+        else:
+            return False
+
+    def fills_col(self, num, i, j):
+        col_vals = [num]
+        for row in range(len(self.board)):
+            if row != i:
+                col_vals.append(self.board[row][j].number)
+        if set(col_vals) == POSSIBLE_VALUES:
+            return True
+        else:
+            return False
+        
+    def solves_board(self, num, i, j):
+        if self.update(num, i, j):
+            for row in range(9):        
+                if set(self.get_row_values(row)) != POSSIBLE_VALUES:
+                    self.reset(i, j)
+                    return True
+            self.reset(i, j)
         return False
 
     def get_row_values(self, row):
@@ -91,6 +135,22 @@ class Sudoku:
         else:
             return []
 
+    def solve(self):
+        cycle_count = 0
+        not_stuck = True
+        while not_stuck:
+            updates = 0
+            for row in range(9):
+                for col in range(9):
+                    poss = self.get_possible_values(row, col)
+                    if len(poss) == 1 and self.board[row][col] != poss[0]:
+                        updates += 1
+                        self.update(poss[0], row, col)
+            if not updates:
+                not_stuck = False
+            cycle_count += 1
+        print(f"Solved in {cycle_count} cycles through every node in the board")
+
     #to string
     def __str__(self):
         outstr = "-------------------------\n" #25 dashes
@@ -101,7 +161,10 @@ class Sudoku:
             if r % 3 == 2:
                 outstr += "-------------------------\n" #25 dashes
         return outstr 
+    
 
 #TESTING
 s = Sudoku("004300209005009001070060043006002087190007400050083000600000105003508690042910300")
+print(s)
+s.solve()
 print(s)

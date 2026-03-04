@@ -34,6 +34,7 @@ class Sudoku:
         if self.board[i][j].number == num:
             return True
         return False
+    
     def reset_board(self):
         self.board = []
         for i in range(9):
@@ -55,9 +56,7 @@ class Sudoku:
     
     def fills_row(self, num, i, j):
         row_vals = [num]
-        for col in range(len(self.board[i])):
-            if col != j:
-                row_vals.append(self.board[i][col].number)
+        row_vals += self.get_row_values(i)
         if set(row_vals) == POSSIBLE_VALUES:
             return True
         else:
@@ -65,22 +64,26 @@ class Sudoku:
 
     def fills_col(self, num, i, j):
         col_vals = [num]
-        for row in range(len(self.board)):
-            if row != i:
-                col_vals.append(self.board[row][j].number)
+        col_vals += self.get_col_values(i)
         if set(col_vals) == POSSIBLE_VALUES:
             return True
         else:
             return False
         
+    def fills_cell(self, num, i, j):
+        cell_vals = [num]
+        cell_vals += self.get_box_values(i, j)
+        if set(cell_vals) == POSSIBLE_VALUES:
+            return True
+        else:
+            return False
+        
     def solves_board(self, num, i, j):
-        if self.update(num, i, j):
-            for row in range(9):        
-                if set(self.get_row_values(row)) != POSSIBLE_VALUES:
-                    self.reset(i, j)
-                    return True
-            self.reset(i, j)
-        return False
+        for row in range(9):        
+            for col in range(9):
+                if self.board[row][col] == 0 and row != i and col != j:
+                    return False
+        return True
 
     def get_row_values(self, row):
         values = []

@@ -4,11 +4,9 @@ import keras
 import matplotlib.pyplot as plt
 import os
 
-from sudoku import Sudoku
-
 path = os.getcwd()
 
-df = pd.read_csv(path + "/training_data/train_sudoku1.csv", nrows=100_000, header=None, names=['quizzes', 'solutions'])
+df = pd.read_csv(path + "/training_data/train_sudoku2.csv", nrows=100_000, header=None, names=['quizzes', 'solutions'])
 
 class DataGenerator(keras.utils.Sequence):
     def __init__(self, df,batch_size = 16, subset = "train", shuffle = False, info={}):
@@ -47,7 +45,7 @@ class DataGenerator(keras.utils.Sequence):
 model = keras.models.Sequential()
 model.add(keras.layers.Input(shape=(9,9,1)))
 # Add convolutional layers
-model.add(keras.layers.Conv2D(64, (3,3), padding='same', activation='relu'))
+model.add(keras.layers.Conv2D(32, (3,3), padding='same', activation='relu'))
 model.add(keras.layers.BatchNormalization())
 model.add(keras.layers.Conv2D(64, (3,3), padding='same', activation='relu'))
 model.add(keras.layers.BatchNormalization())
@@ -66,8 +64,6 @@ training_generator = DataGenerator(data.iloc[:train_idx], subset = "train", batc
 validation_generator = DataGenerator(data.iloc[train_idx:], subset = "train",  batch_size=256)
 
 history = model.fit(training_generator, validation_data=validation_generator, epochs=5)
-
-model.save('conv_model')
 
 # plot
 fig, axes = plt.subplots(1, 2, figsize=(12, 4))

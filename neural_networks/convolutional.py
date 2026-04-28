@@ -5,8 +5,10 @@ import matplotlib.pyplot as plt
 import os
 
 path = os.getcwd()
-
-df = pd.read_csv(path + "/training_data/train_sudoku2.csv", nrows=100_000, header=None, names=['quizzes', 'solutions'])
+df1 = pd.read_csv(path + "/training_data/train_sudoku1.csv", nrows=400_000, header=None, names=['quizzes', 'solutions'])
+df2= (pd.read_csv(path + "/training_data/train_sudoku2.csv", nrows=400_000, header=None, names=['quizzes', 'solutions']))
+train = pd.concat([df1, df2])
+test = pd.read_csv(path + "/test_data_DONOTTOUCH/test_sudoku.csv", nrows=200_000, header=1, names=['quizzes', 'solutions'])
 
 class DataGenerator(keras.utils.Sequence):
     def __init__(self, df,batch_size = 16, subset = "train", shuffle = False, info={}):
@@ -58,23 +60,24 @@ model.add(keras.layers.Activation('softmax'))
 
 model.compile(loss="sparse_categorical_crossentropy", optimizer=keras.optimizers.Adam(learning_rate=0.001), metrics=['accuracy'])
 
-train_idx = int(len(df)*0.95)
-data = df.sample(frac=1).reset_index(drop=True)
-training_generator = DataGenerator(data.iloc[:train_idx], subset = "train", batch_size=256)
-validation_generator = DataGenerator(data.iloc[train_idx:], subset = "train",  batch_size=256)
+training_generator = DataGenerator(train, subset = "train", batch_size=128)
+validation_generator = DataGenerator(test, subset = "train",  batch_size=128)
 
 history = model.fit(training_generator, validation_data=validation_generator, epochs=5)
 
+model.save("conv_model_test.keras")
 # plot
 fig, axes = plt.subplots(1, 2, figsize=(12, 4))
 axes[0].plot(history.history['loss'], label='Train')
-axes[0].plot(history.history['val_loss'], label='Val')
+axes[0].plot(history.history['val_loss'], label='Test')
 axes[0].set_title('Loss'); axes[0].set_xlabel('Epoch'); axes[0].legend()
 axes[1].plot(history.history['accuracy'], label='Train')
-axes[1].plot(history.history['val_accuracy'], label='Val')
+axes[1].plot(history.history['val_accuracy'], label='Test')
 axes[1].set_title('Accuracy'); axes[1].set_xlabel('Epoch'); axes[1].legend()
 plt.tight_layout()
+plt.savefig('conv_accuracy_test.png')
 plt.show()
+
 
 final_train_acc = history.history['accuracy'][-1]
 final_val_acc   = history.history['val_accuracy'][-1]
@@ -84,6 +87,6 @@ final_val_loss   = history.history['val_loss'][-1]
 
 # print training accuracy and loss
 print(f"Final Training Accuracy  : {final_train_acc:.4f}")
-print(f"Final Validation Accuracy: {final_val_acc:.4f}")
+print(f"Final Test Accuracy: {final_val_acc:.4f}")
 print(f"Final Training Loss      : {final_train_loss:.4f}")
-print(f"Final Validation Loss    : {final_val_loss:.4f}")
+print(f"Final Test Loss    : {final_val_loss:.4f}")

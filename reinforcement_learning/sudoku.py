@@ -54,6 +54,14 @@ class Sudoku:
                 return True
         return False
     
+    def is_only_valid_move(self, num, i, j):
+        square = self.board[i][j]
+        if square.editable:
+            poss_vals = self.get_possible_values(i, j)
+            if num in poss_vals and len(poss_vals) == 1:
+                return True
+        return False
+    
     def fills_row(self, num, i, j):
         row_vals = [num]
         row_vals += self.get_row_values(i)
@@ -167,7 +175,7 @@ class Sudoku:
     
 
 #TESTING
-s = Sudoku("004300209005009001070060043006002087190007400050083000600000105003508690042910300")
-print(s)
-s.solve()
-print(s)
+# s = Sudoku("004300209005009001070060043006002087190007400050083000600000105003508690042910300")
+# print(s)
+# s.solve()
+# print(s)
